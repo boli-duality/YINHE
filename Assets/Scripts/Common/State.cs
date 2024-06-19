@@ -1,14 +1,16 @@
+using UnityEngine;
+
 namespace Common
 {
     public abstract class State
     {
-        protected StateMachine stateMachine;
-        private string _animationName;
+        protected readonly StateMachine stateMachine;
+        protected readonly string animationName;
 
         protected State(StateMachine stateMachine, string animationName)
         {
             this.stateMachine = stateMachine;
-            _animationName = animationName;
+            this.animationName = animationName;
         }
 
         public virtual void Enter()

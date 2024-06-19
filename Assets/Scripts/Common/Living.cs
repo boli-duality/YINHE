@@ -4,16 +4,19 @@ namespace Common
 {
     public class Living : MonoBehaviour
     {
-        protected Animator animator;
+        public Animator animator;
+        public float xAxis;
 
         // Start is called before the first frame update
-        void Start()
+        protected virtual void Start()
         {
+            animator = GetComponentInChildren<Animator>();
         }
 
         // Update is called once per frame
-        void Update()
+        protected void Update()
         {
+            xAxis = Input.GetAxisRaw("Horizontal");
         }
     }
 }
