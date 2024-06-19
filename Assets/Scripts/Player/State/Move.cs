@@ -1,10 +1,13 @@
+using Common;
+
 namespace Player.State
 {
     public class Move : Common.State
     {
         private readonly Player _player;
 
-        public Move(Player player, StateMachine stateMachine, string animationName) : base(stateMachine, animationName)
+        public Move(Player player, StateMachine stateMachine, string animationName)
+            : base(stateMachine, animationName)
         {
             _player = player;
         }
