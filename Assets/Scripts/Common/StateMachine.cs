@@ -6,13 +6,13 @@ namespace Common
     {
         public State CurrentState { get; private set; }
 
-        public virtual void Init(State state)
+        public void Init(State state)
         {
             CurrentState = state;
             CurrentState.Enter();
         }
 
-        public virtual void ChangeState(State state)
+        public void ChangeState(State state)
         {
             CurrentState.Exit();
             CurrentState = state;

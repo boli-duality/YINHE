@@ -1,35 +1,62 @@
 using System;
 using Common;
-using Player.State;
+using Player.States;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Player
 {
     public class Player : Living
     {
-        private StateMachine _stateMachine;
-        public Common.State stateIdle;
-        public Common.State stateMove;
+        #region 状态机
+        public State StateIdle { get; private set; }
+        public State StateMove { get; private set; }
+        public State StateJump { get; private set; }
+        #endregion
 
         private void Awake()
         {
-            _stateMachine = new StateMachine();
-            stateIdle = new Idle(this, _stateMachine, "Idle");
-            stateMove = new Move(this, _stateMachine, "Move");
+            #region 状态机
+            StateIdle = new Idle(this, stateMachine, "Idle");
+            StateMove = new Move(this, stateMachine, "Move");
+            StateJump = new Jump(this, stateMachine, "Jump");
+            #endregion
         }
 
-        // Start is called before the first frame update
         protected override void Start()
         {
             base.Start();
-            _stateMachine.Init(stateIdle);
+            stateMachine.Init(StateIdle);
         }
 
-        // Update is called once per frame
-        private new void Update()
+        protected override void OnUpdating()
         {
-            base.Update();
-            _stateMachine.CurrentState.Update();
+            Transforming();
+            base.OnUpdating();
+        }
+
+        protected override void OnUpdated()
+        {
+            Transformed();
+        }
+
+        private void Transforming()
+        {
+            velocity.x = Input.GetAxisRaw("Horizontal") * moveSpeed;
+            velocity.y = rigidbody2D.velocity.y;
+
+            if (!Input.GetKeyDown(KeyCode.Space))
+            {
+                return;
+            }
+
+            velocity.y = jumpForce;
+            stateMachine.ChangeState(StateJump);
+        }
+
+        private void Transformed()
+        {
+            rigidbody2D.velocity = velocity;
         }
     }
 }

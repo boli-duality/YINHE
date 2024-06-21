@@ -5,18 +5,38 @@ namespace Common
     public class Living : MonoBehaviour
     {
         public Animator animator;
-        public float xAxis;
+        public new Rigidbody2D rigidbody2D;
 
-        // Start is called before the first frame update
+        public StateMachine stateMachine;
+
+        [Header("Move Speed")]
+        [SerializeField]
+        protected float moveSpeed;
+        [SerializeField]
+        protected float jumpForce = 10f;
+
+        public Vector2 velocity;
+
         protected virtual void Start()
         {
             animator = GetComponentInChildren<Animator>();
+            rigidbody2D = GetComponent<Rigidbody2D>();
+            stateMachine = new StateMachine();
         }
 
-        // Update is called once per frame
         protected void Update()
         {
-            xAxis = Input.GetAxisRaw("Horizontal");
+            OnUpdating();
+            OnUpdated();
+        }
+
+        protected virtual void OnUpdating()
+        {
+            stateMachine.CurrentState.Update();
+        }
+
+        protected virtual void OnUpdated()
+        {
         }
     }
 }

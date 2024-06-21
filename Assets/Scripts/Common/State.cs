@@ -5,24 +5,18 @@ namespace Common
     public abstract class State
     {
         protected readonly StateMachine stateMachine;
-        protected readonly string animationName;
+        protected readonly int animationHash;
 
         protected State(StateMachine stateMachine, string animationName)
         {
             this.stateMachine = stateMachine;
-            this.animationName = animationName;
+            animationHash = Animator.StringToHash(animationName);
         }
 
-        public virtual void Enter()
-        {
-        }
+        public abstract void Enter();
 
-        public virtual void Exit()
-        {
-        }
+        public abstract void Exit();
 
-        public virtual void Update()
-        {
-        }
+        public abstract void Update();
     }
 }
