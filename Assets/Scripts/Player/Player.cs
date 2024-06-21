@@ -42,7 +42,7 @@ namespace Player
 
         private void Transforming()
         {
-            velocity.x = Input.GetAxisRaw("Horizontal") * moveSpeed;
+            velocity.x = Input.GetAxisRaw("Horizontal") * moveSpeed * 5;
             velocity.y = rigidbody2D.velocity.y;
 
             if (!Input.GetKeyDown(KeyCode.Space))
