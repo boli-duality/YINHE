@@ -14,6 +14,11 @@ namespace Player
         public State StateJump { get; private set; }
         #endregion
 
+        // 上一帧是否同时按下左右键
+        private bool _lastKeepOnX;
+
+        public bool IsFaceRight { get; set; } = true;
+
         private void Awake()
         {
             #region 状态机
@@ -29,10 +34,9 @@ namespace Player
             stateMachine.Init(StateIdle);
         }
 
-        protected override void OnUpdating()
+        protected override void OnBeforeUpdate()
         {
             Transforming();
-            base.OnUpdating();
         }
 
         protected override void OnUpdated()
@@ -42,21 +46,40 @@ namespace Player
 
         private void Transforming()
         {
-            velocity.x = Input.GetAxisRaw("Horizontal") * moveSpeed * 5;
-            velocity.y = rigidbody2D.velocity.y;
-
-            if (!Input.GetKeyDown(KeyCode.Space))
+            var keepOnX = Input.GetAxisRaw("Horizontal") == 0 &&
+                          (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) &&
+                          (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow));
+            if (!keepOnX)
             {
-                return;
+                velocity.x = Input.GetAxisRaw("Horizontal") * moveSpeed;
+            }
+            else if (!_lastKeepOnX)
+            {
+                velocity.x *= -1;
             }
 
-            velocity.y = jumpForce;
-            stateMachine.ChangeState(StateJump);
+            _lastKeepOnX = keepOnX;
+
+            velocity.y = rigidbody2D.velocity.y;
+
+            switch (velocity.x)
+            {
+                case > 0 when !IsFaceRight:
+                case < 0 when IsFaceRight:
+                    Flip();
+                    break;
+            }
         }
 
         private void Transformed()
         {
             rigidbody2D.velocity = velocity;
+        }
+
+        private void Flip()
+        {
+            IsFaceRight = !IsFaceRight;
+            transform.Rotate(0, 180, 0);
         }
     }
 }

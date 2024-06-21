@@ -5,8 +5,6 @@ namespace Player.States
 {
     public class GroundedState : PlayerState
     {
-        private readonly int _velocityYHash = Animator.StringToHash("velocityY");
-
         protected GroundedState(Player player, StateMachine stateMachine, string animationName)
             : base(player, stateMachine, animationName)
         {
@@ -16,7 +14,9 @@ namespace Player.States
         {
             base.Update();
 
-            player.animator.SetFloat(_velocityYHash, player.velocity.y);
+            if (!Input.GetKeyDown(KeyCode.Space)) return;
+            player.velocity.y = player.jumpForce;
+            stateMachine.ChangeState(player.StateJump);
         }
     }
 }
