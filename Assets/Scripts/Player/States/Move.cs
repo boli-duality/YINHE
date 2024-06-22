@@ -2,7 +2,7 @@ using Common;
 
 namespace Player.States
 {
-    public class Move : GroundedState
+    public class Move : Grounded
     {
         public Move(Player player, StateMachine stateMachine, string animationName)
             : base(player, stateMachine, animationName)

@@ -1,5 +1,7 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Common
 {
@@ -7,8 +9,6 @@ namespace Common
     {
         public Animator animator;
         public new Rigidbody2D rigidbody2D;
-
-        public readonly StateMachine stateMachine = new();
 
         [Header("Move Speed")]
         [SerializeField] protected float moveSpeed;
@@ -21,8 +21,11 @@ namespace Common
         [SerializeField] public LayerMask wallLayer;
         [SerializeField] public Transform wallCheck;
         [SerializeField] public float wallCheckDistance;
-
         [HideInInspector] public Vector2 velocity;
+
+        public bool isGrounded;
+
+        public readonly StateMachine stateMachine = new();
 
         protected virtual void Start()
         {
@@ -35,6 +38,30 @@ namespace Common
             OnBeforeUpdate();
             OnUpdating();
             OnUpdated();
+        }
+
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            {
+                isGrounded = true;
+            }
+        }
+
+        private void OnCollisionExit2D(Collision2D other)
+        {
+            if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            {
+                isGrounded = false;
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawLine(groundCheck.position,
+                new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
+            Gizmos.DrawLine(wallCheck.position,
+                new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y));
         }
 
         protected virtual void OnBeforeUpdate()
@@ -50,17 +77,9 @@ namespace Common
         {
         }
 
-        public bool IsGrounded()
+        public bool IsCheckedGround()
         {
             return Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawLine(groundCheck.position,
-                new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
-            Gizmos.DrawLine(wallCheck.position,
-                new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y));
         }
     }
 }

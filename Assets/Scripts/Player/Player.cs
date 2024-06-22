@@ -1,6 +1,5 @@
 using System;
 using Common;
-using Player.States;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,12 +7,6 @@ namespace Player
 {
     public class Player : Living
     {
-        #region 状态机
-        public State StateIdle { get; private set; }
-        public State StateMove { get; private set; }
-        public State StateJump { get; private set; }
-        #endregion
-
         // 上一帧是否同时按下左右键
         private bool _lastKeepOnX;
 
@@ -22,9 +15,10 @@ namespace Player
         private void Awake()
         {
             #region 状态机
-            StateIdle = new Idle(this, stateMachine, "Idle");
-            StateMove = new Move(this, stateMachine, "Move");
-            StateJump = new Jump(this, stateMachine, "Jump");
+            StateIdle = new States.Idle(this, stateMachine, "Idle");
+            StateMove = new States.Move(this, stateMachine, "Move");
+            StateJump = new States.Jump(this, stateMachine, "Jump");
+            StateDash = new States.Dash(this, stateMachine, "Dash");
             #endregion
         }
 
@@ -36,15 +30,15 @@ namespace Player
 
         protected override void OnBeforeUpdate()
         {
-            Transforming();
+            TransformController();
         }
 
         protected override void OnUpdated()
         {
-            Transformed();
+            TransformSettled();
         }
 
-        private void Transforming()
+        private void TransformController()
         {
             var keepOnX = Input.GetAxisRaw("Horizontal") == 0 &&
                           (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) &&
@@ -71,7 +65,7 @@ namespace Player
             }
         }
 
-        private void Transformed()
+        private void TransformSettled()
         {
             rigidbody2D.velocity = velocity;
         }
@@ -81,5 +75,12 @@ namespace Player
             IsFaceRight = !IsFaceRight;
             transform.Rotate(0, 180, 0);
         }
+
+        #region 状态机
+        public State StateIdle { get; private set; }
+        public State StateMove { get; private set; }
+        public State StateJump { get; private set; }
+        public State StateDash { get; private set; }
+        #endregion
     }
 }

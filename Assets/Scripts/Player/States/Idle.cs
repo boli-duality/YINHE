@@ -2,7 +2,7 @@ using Common;
 
 namespace Player.States
 {
-    public class Idle : GroundedState
+    public class Idle : Grounded
     {
         public Idle(Player player, StateMachine stateMachine, string animationName)
             : base(player, stateMachine, animationName)

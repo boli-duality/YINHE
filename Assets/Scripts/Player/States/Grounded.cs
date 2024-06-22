@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Player.States
 {
-    public class GroundedState : PlayerState
+    public class Grounded : PlayerState
     {
-        protected GroundedState(Player player, StateMachine stateMachine, string animationName)
+        protected Grounded(Player player, StateMachine stateMachine, string animationName)
             : base(player, stateMachine, animationName)
         {
         }

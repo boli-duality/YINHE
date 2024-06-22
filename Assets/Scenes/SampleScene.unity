@@ -320,13 +320,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   groundCheck: {fileID: 1473231672}
-  groundCheckDistance: 1.5
+  groundCheckDistance: 1.8
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
   wallCheck: {fileID: 1729071180}
   wallCheckDistance: 0.2
   velocity: {x: 0, y: 0}
+  isGrounded: 0
 --- !u!50 &132884108
 Rigidbody2D:
   serializedVersion: 4
@@ -584,7 +585,7 @@ GameObject:
   - component: {fileID: 1010419407}
   - component: {fileID: 1010419406}
   - component: {fileID: 1010419408}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Plain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
