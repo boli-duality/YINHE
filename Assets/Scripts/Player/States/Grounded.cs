@@ -14,7 +14,7 @@ namespace Player.States
         {
             base.Update();
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && player.isGrounded)
             {
                 player.velocity.y = player.jumpForce;
                 stateMachine.ChangeState(player.StateJump);

@@ -16,8 +16,11 @@ namespace Player.States
         {
             base.Update();
 
-            player.animator.SetFloat(_velocityYHash, player.velocity.y);
-            if (player.isGrounded)
+            var y = player.velocity.y;
+
+            player.animator.SetFloat(_velocityYHash, y);
+
+            if (player.isGrounded && y == 0)
             {
                 player.stateMachine.ChangeState(player.velocity.x == 0 ? player.StateIdle : player.StateMove);
             }
