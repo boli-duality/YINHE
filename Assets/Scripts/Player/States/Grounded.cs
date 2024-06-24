@@ -14,9 +14,11 @@ namespace Player.States
         {
             base.Update();
 
-            if (!Input.GetKeyDown(KeyCode.Space)) return;
-            player.velocity.y = player.jumpForce;
-            stateMachine.ChangeState(player.StateJump);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player.velocity.y = player.jumpForce;
+                stateMachine.ChangeState(player.StateJump);
+            }
         }
     }
 }
