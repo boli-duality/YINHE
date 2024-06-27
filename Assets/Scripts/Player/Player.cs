@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Common;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -7,10 +8,28 @@ namespace Player
 {
     public class Player : Living
     {
+        #region 状态机
+        public State StateIdle { get; private set; }
+        public State StateMove { get; private set; }
+        public State StateJump { get; private set; }
+        public State StateDash { get; private set; }
+        public State StateGround { get; private set; }
+        public State StateAir { get; private set; }
+        public State StateWallSlide { get; private set; }
+        #endregion
+
         // 上一帧是否同时按下左右键
         private bool _lastKeepOnX;
 
-        public bool IsFaceRight { get; set; } = true;
+        [Header("Dash")]
+        public float dashDuration = .2f;
+        public float dashCooldown = .5F;
+        [NonSerialized] public float dashCooldownTimer;
+        public bool CanDash => dashCooldownTimer <= 0 && !IsCheckedWall();
+        public float dashSpeed = 60;
+        [NonSerialized] public float dashDirection = 1;
+
+        [NonSerialized] public float yInput;
 
         private void Awake()
         {
@@ -19,6 +38,9 @@ namespace Player
             StateMove = new States.Move(this, stateMachine, "Move");
             StateJump = new States.Jump(this, stateMachine, "Jump");
             StateDash = new States.Dash(this, stateMachine, "Dash");
+            StateGround = new States.Ground(this, stateMachine, "Ground");
+            StateAir = new States.Air(this, stateMachine, "Air");
+            StateWallSlide = new States.WallSlide(this, stateMachine, "WallSlide");
             #endregion
         }
 
@@ -28,17 +50,20 @@ namespace Player
             stateMachine.Init(StateIdle);
         }
 
-        protected override void OnBeforeUpdate()
+        protected override void OnUpdateStart()
         {
-            TransformController();
+            MoveController();
+            // 翻转控制
+            FlipController();
+            DashController();
         }
 
-        protected override void OnUpdated()
+        protected override void OnUpdateEnd()
         {
-            TransformSettled();
+            MoveSettled();
         }
 
-        private void TransformController()
+        private void MoveController()
         {
             var keepOnX = Input.GetAxisRaw("Horizontal") == 0 &&
                           (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) &&
@@ -56,31 +81,38 @@ namespace Player
 
             velocity.y = rigidbody2D.velocity.y;
 
-            switch (velocity.x)
-            {
-                case > 0 when !IsFaceRight:
-                case < 0 when IsFaceRight:
-                    Flip();
-                    break;
-            }
+            yInput = Input.GetAxisRaw("Vertical");
         }
 
-        private void TransformSettled()
+        private void MoveSettled()
         {
             rigidbody2D.velocity = velocity;
         }
 
-        private void Flip()
+        private void FlipController()
         {
-            IsFaceRight = !IsFaceRight;
-            transform.Rotate(0, 180, 0);
+            if (stateMachine.CurrentState == StateDash)
+            {
+                return;
+            }
+
+            switch (velocity.x)
+            {
+                case > 0 when !IsFaceRight:
+                case < 0 when IsFaceRight:
+                    IsFaceRight = !IsFaceRight;
+                    moveDirection = IsFaceRight ? 1 : -1;
+                    transform.Rotate(0, 180, 0);
+                    break;
+            }
         }
 
-        #region 状态机
-        public State StateIdle { get; private set; }
-        public State StateMove { get; private set; }
-        public State StateJump { get; private set; }
-        public State StateDash { get; private set; }
-        #endregion
+        private void DashController()
+        {
+            if (dashCooldownTimer > 0)
+            {
+                dashCooldownTimer -= Time.deltaTime;
+            }
+        }
     }
 }

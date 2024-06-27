@@ -25,6 +25,22 @@ namespace Player
 
         public override void Update()
         {
+            DashController();
+        }
+
+        private void DashController()
+        {
+            if (Input.GetKeyDown(KeyCode.LeftShift) && player.CanDash)
+            {
+                player.dashDirection = Input.GetAxisRaw("Horizontal");
+                if (player.dashDirection == 0)
+                {
+                    player.dashDirection = player.moveDirection;
+                }
+
+                player.dashCooldownTimer = player.dashCooldown;
+                stateMachine.ChangeState(player.StateDash);
+            }
         }
     }
 }

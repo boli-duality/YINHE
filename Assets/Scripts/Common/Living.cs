@@ -9,10 +9,14 @@ namespace Common
     {
         public Animator animator;
         public new Rigidbody2D rigidbody2D;
+        [HideInInspector] public Vector2 velocity;
 
         [Header("Move Speed")]
-        [SerializeField] protected float moveSpeed;
-        [SerializeField] public float jumpForce = 10f;
+        [SerializeField] protected float moveSpeed = 20;
+        [SerializeField] public float jumpForce = 20;
+        [FormerlySerializedAs("moveCoefficient")]
+        [HideInInspector]
+        public int moveDirection = 1;
 
         [Header("Collision info")]
         [SerializeField] public LayerMask groundLayer;
@@ -21,9 +25,9 @@ namespace Common
         [SerializeField] public LayerMask wallLayer;
         [SerializeField] public Transform wallCheck;
         [SerializeField] public float wallCheckDistance;
-        [HideInInspector] public Vector2 velocity;
 
         public bool isGrounded;
+        public bool IsFaceRight { get; set; } = true;
 
         public readonly StateMachine stateMachine = new();
 
@@ -35,9 +39,22 @@ namespace Common
 
         protected void Update()
         {
-            OnBeforeUpdate();
-            OnUpdating();
-            OnUpdated();
+            OnUpdateStart();
+            OnUpdate();
+            OnUpdateEnd();
+        }
+
+        protected virtual void OnUpdateStart()
+        {
+        }
+
+        protected virtual void OnUpdate()
+        {
+            stateMachine.CurrentState.Update();
+        }
+
+        protected virtual void OnUpdateEnd()
+        {
         }
 
         private void OnCollisionEnter2D(Collision2D other)
@@ -61,25 +78,17 @@ namespace Common
             Gizmos.DrawLine(groundCheck.position,
                 new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
             Gizmos.DrawLine(wallCheck.position,
-                new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y));
-        }
-
-        protected virtual void OnBeforeUpdate()
-        {
-        }
-
-        protected virtual void OnUpdating()
-        {
-            stateMachine.CurrentState.Update();
-        }
-
-        protected virtual void OnUpdated()
-        {
+                new Vector3(wallCheck.position.x + wallCheckDistance * moveDirection, wallCheck.position.y));
         }
 
         public bool IsCheckedGround()
         {
             return Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+        }
+
+        public bool IsCheckedWall()
+        {
+            return Physics2D.Raycast(wallCheck.position, Vector2.right * moveDirection, wallCheckDistance, wallLayer);
         }
     }
 }

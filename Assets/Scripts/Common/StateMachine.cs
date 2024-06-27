@@ -15,7 +15,7 @@ namespace Common
         public void ChangeState(State state)
         {
             CurrentState.Exit();
-            CurrentState = state;
+            CurrentState = state.EnterInterceptor(state);
             CurrentState.Enter();
         }
     }

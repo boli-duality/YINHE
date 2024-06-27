@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Player.States
 {
-    public class Jump : PlayerState
+    public class Jump : Air
     {
         private readonly int _velocityYHash = Animator.StringToHash("velocityY");
 
@@ -20,9 +20,14 @@ namespace Player.States
 
             player.animator.SetFloat(_velocityYHash, y);
 
-            if (player.isGrounded && y == 0)
+            if (y <= 0 && player.IsCheckedWall())
             {
-                player.stateMachine.ChangeState(player.velocity.x == 0 ? player.StateIdle : player.StateMove);
+                stateMachine.ChangeState(player.StateWallSlide);
+            }
+
+            if (player.IsCheckedGround() && y == 0)
+            {
+                stateMachine.ChangeState(player.StateGround);
             }
         }
     }

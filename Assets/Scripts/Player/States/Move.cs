@@ -2,7 +2,7 @@ using Common;
 
 namespace Player.States
 {
-    public class Move : Grounded
+    public class Move : Ground
     {
         public Move(Player player, StateMachine stateMachine, string animationName)
             : base(player, stateMachine, animationName)
@@ -15,7 +15,7 @@ namespace Player.States
 
             if (player.velocity.x == 0)
             {
-                player.stateMachine.ChangeState(player.StateIdle);
+                stateMachine.ChangeState(player.StateIdle);
             }
         }
     }
