@@ -16,6 +16,7 @@ namespace Player
         public State StateGround { get; private set; }
         public State StateAir { get; private set; }
         public State StateWallSlide { get; private set; }
+        public State StateWallJump { get; private set; }
         #endregion
 
         // 上一帧是否同时按下左右键
@@ -41,6 +42,7 @@ namespace Player
             StateGround = new States.Ground(this, stateMachine, "Ground");
             StateAir = new States.Air(this, stateMachine, "Air");
             StateWallSlide = new States.WallSlide(this, stateMachine, "WallSlide");
+            StateWallJump = new States.WallJump(this, stateMachine, "WallJump");
             #endregion
         }
 

@@ -30,17 +30,19 @@ namespace Player
 
         private void DashController()
         {
-            if (Input.GetKeyDown(KeyCode.LeftShift) && player.CanDash)
+            if (!player.CanDash || !Input.GetKeyDown(KeyCode.LeftShift))
             {
-                player.dashDirection = Input.GetAxisRaw("Horizontal");
-                if (player.dashDirection == 0)
-                {
-                    player.dashDirection = player.moveDirection;
-                }
-
-                player.dashCooldownTimer = player.dashCooldown;
-                stateMachine.ChangeState(player.StateDash);
+                return;
             }
+
+            player.dashDirection = Input.GetAxisRaw("Horizontal");
+            if (player.dashDirection == 0)
+            {
+                player.dashDirection = player.moveDirection;
+            }
+
+            player.dashCooldownTimer = player.dashCooldown;
+            stateMachine.ChangeState(player.StateDash);
         }
     }
 }

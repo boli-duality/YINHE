@@ -12,11 +12,9 @@ namespace Common
         [HideInInspector] public Vector2 velocity;
 
         [Header("Move Speed")]
-        [SerializeField] protected float moveSpeed = 20;
+        public float moveSpeed = 20;
         [SerializeField] public float jumpForce = 20;
-        [FormerlySerializedAs("moveCoefficient")]
-        [HideInInspector]
-        public int moveDirection = 1;
+        [HideInInspector] public int moveDirection = 1;
 
         [Header("Collision info")]
         [SerializeField] public LayerMask groundLayer;

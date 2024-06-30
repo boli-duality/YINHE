@@ -13,7 +13,7 @@ namespace Player.States
         {
             base.Update();
 
-            if (player.velocity.x != 0)
+            if (player.velocity.x != 0 && !player.IsCheckedWall())
             {
                 stateMachine.ChangeState(player.StateMove);
             }

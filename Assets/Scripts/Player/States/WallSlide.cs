@@ -19,16 +19,14 @@ namespace Player.States
                 player.velocity.y *= .7f;
             }
 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                stateMachine.ChangeState(player.StateWallJump);
+            }
+
             if (!player.IsCheckedWall())
             {
-                if (player.velocity.y == 0)
-                {
-                    stateMachine.ChangeState(player.StateGround);
-                }
-                else
-                {
-                    stateMachine.ChangeState(player.StateAir);
-                }
+                stateMachine.ChangeState(player.velocity.y == 0 ? player.StateGround : player.StateAir);
             }
 
             if (player.IsCheckedGround())
